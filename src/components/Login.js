@@ -1,12 +1,99 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { checkValidData } from "../utils/validate";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isSignInForm, setIsSignInForm] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+
+  const email = useRef(null);
+  const password = useRef(null);
+  const name = useRef(null);
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
+  };
+
+  const handleButtonClick = () => {
+    // console.log(email.current.value);
+    // console.log(password.current.value);
+
+    if (!email.current || !password.current || !name.current) {
+      setErrorMessage("Input fields not initialized.");
+      return; // Exit early if refs are still null
+    }
+
+    const message = checkValidData(
+      email?.current?.value,
+      password?.current?.value,
+      // name.current.value
+    );
+    setErrorMessage(message);
+    if (message) return;
+
+    // console.log(message);
+
+    //Signin / signup logic
+
+    if (!isSignInForm) {
+      //signUp logic
+      createUserWithEmailAndPassword(
+        auth,
+        email?.current?.value,
+        password?.current?.value,
+        // name.current.value
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: name?.current?.value,
+            photoURL: "https://avatars.githubusercontent.com/u/91043382?v=4",
+          })
+            .then(() => {
+              const {uid, email, displayName, photoURL} = auth.currentUser;
+            dispatch(addUser({uid: uid, email: email, displayName: displayName, photoURL:photoURL}));
+              navigate("/browse");
+            })
+            .catch((error) => {
+              setErrorMessage(error.message);
+            });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    } else {
+      //signIn logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log(user);
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    }
   };
 
   return (
@@ -18,49 +105,63 @@ const Login = () => {
           src="https://assets.nflxext.com/ffe/siteui/vlv3/ce449112-3294-449a-b8d3-c4e1fdd7cff5/web/IN-en-20241202-TRIFECTA-perspective_0acfb303-6291-4ad1-806f-dda785f6295a_small.jpg"
         />
       </div>
-      <form className="w-2/6 absolute bg-black my-24 mx-auto right-0 left-0 p-4 bg-opacity-90 flex flex-col rounded-md text-white">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="w-2/6 absolute bg-black my-24 mx-auto right-0 left-0 p-4 bg-opacity-90 flex flex-col rounded-md text-white"
+      >
         <h1 className="font-bold text-3xl ml-12 mt-8 mb-6">
           {isSignInForm ? "Sign In" : "Sign Up"}
         </h1>
         {!isSignInForm && (
           <input
+            ref={name}
             type="text"
             placeholder="Full Name"
             className="p-2 m-2 mx-12 rounded-md bg-zinc-900 opacity-50 border border-white "
           />
         )}
         <input
+          ref={email}
           type="email"
           placeholder="Email"
           className="p-2 m-2 mx-12 rounded-md bg-zinc-900 opacity-50 border border-white "
         />
+
         <input
-          type="password"
+          ref={password}
+          type={showPassword ? "text" : "password"}
           placeholder="Password"
           className="p-2 m-2 mx-12 rounded-md bg-zinc-900 opacity-50 border border-white "
+          onFocus={() => setShowPassword(!showPassword)}
         />
+
         {!isSignInForm && (
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Confirm Password"
-            className="p-2 m-2 mx-12 rounded-md bg-zinc-900 opacity-50 border border-white "
+            className="p-2 m-2 mx-12  rounded-md bg-zinc-900 opacity-50 border border-white "
           />
         )}
+
         {!isSignInForm && (
           <h1 className="ml-12 text-sm flex items-center my-4">
-            <input type="checkbox" className="w-4 h-4 mr-3" /> I accept the{" "}
+            <input type="checkbox" className="w-4 h-4 mr-3" /> I accept the
             <span className="text-blue-600 mx-1  hover:underline hover:cursor-pointer">
-              {" "}
-              Terms of use{" "}
-            </span>{" "}
-            &{" "}
+              Terms of use
+            </span>
+            &
             <span className="text-blue-600 ml-1 hover:underline hover:cursor-pointer">
-              {" "}
-              Privacy Policy.{" "}
+              Privacy Policy.
             </span>
           </h1>
         )}
-        <button className="p-2 m-2 mx-12 bg-red-700 rounded-md font-medium">
+        <p className="text-red-700 ml-12 text-sm py-2 font-medium">
+          {errorMessage}
+        </p>
+        <button
+          className="p-2 m-2 mx-12 bg-red-700 rounded-md font-medium"
+          onClick={handleButtonClick}
+        >
           {isSignInForm ? "Sign In" : "Sign Up"}
         </button>
         {isSignInForm && <h1 className="text-center my-1 text-sm ">OR</h1>}
