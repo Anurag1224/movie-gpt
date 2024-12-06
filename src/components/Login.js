@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Header from "./Header";
 import { useRef, useState } from "react";
 import { checkValidData } from "../utils/validate";
@@ -10,9 +10,9 @@ import {
 import { auth } from "../utils/firebase";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { USER_AVATAR } from "../utils/constants";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -27,23 +27,17 @@ const Login = () => {
   };
 
   const handleButtonClick = () => {
-    // console.log(email.current.value);
-    // console.log(password.current.value);
-
-    if (!email.current || !password.current || !name.current) {
+    if (!email.current || !password.current) {
       setErrorMessage("Input fields not initialized.");
       return; // Exit early if refs are still null
     }
 
     const message = checkValidData(
       email?.current?.value,
-      password?.current?.value,
-      // name.current.value
+      password?.current?.value
     );
     setErrorMessage(message);
     if (message) return;
-
-    // console.log(message);
 
     //Signin / signup logic
 
@@ -52,19 +46,24 @@ const Login = () => {
       createUserWithEmailAndPassword(
         auth,
         email?.current?.value,
-        password?.current?.value,
-        // name.current.value
+        password?.current?.value
       )
         .then((userCredential) => {
           const user = userCredential.user;
           updateProfile(user, {
             displayName: name?.current?.value,
-            photoURL: "https://avatars.githubusercontent.com/u/91043382?v=4",
+            photoURL: USER_AVATAR,
           })
             .then(() => {
-              const {uid, email, displayName, photoURL} = auth.currentUser;
-            dispatch(addUser({uid: uid, email: email, displayName: displayName, photoURL:photoURL}));
-              navigate("/browse");
+              const { uid, email, displayName, photoURL } = auth.currentUser;
+              dispatch(
+                addUser({
+                  uid: uid,
+                  email: email,
+                  displayName: displayName,
+                  photoURL: photoURL,
+                })
+              );
             })
             .catch((error) => {
               setErrorMessage(error.message);
@@ -79,14 +78,12 @@ const Login = () => {
       //signIn logic
       signInWithEmailAndPassword(
         auth,
-        email.current.value,
-        password.current.value
+        email?.current?.value,
+        password?.current?.value
       )
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -132,7 +129,8 @@ const Login = () => {
           type={showPassword ? "text" : "password"}
           placeholder="Password"
           className="p-2 m-2 mx-12 rounded-md bg-zinc-900 opacity-50 border border-white "
-          onFocus={() => setShowPassword(!showPassword)}
+          onMouseEnter={() => setShowPassword(true)}
+          onMouseLeave={() => setShowPassword(false)}
         />
 
         {!isSignInForm && (
