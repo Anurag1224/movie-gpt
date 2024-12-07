@@ -54,5 +54,9 @@
     - useTopRatedMovies Custom hook
     - GPT Search Page
     - GPT Search Bar
+    - build languageConstant to configure multiple language 
+    - build configSlice to manage the state of the language 
+    - created language supported in the constant.js in which each language has identifier and name
+    - Created multi-language feature in our GPT Search for now
     
     
