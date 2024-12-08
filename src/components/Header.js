@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
 import { LOGO_URL, SUPPORTED_LANGUAGES } from "../utils/constants";
-import { toggleGptSearchView } from "../utils/gptSlice";
+import { removeGptSearchMovieResult, toggleGptSearchView } from "../utils/gptSlice";
 import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
@@ -41,6 +41,7 @@ const Header = () => {
         navigate("/browse");
       } else {
         dispatch(removeUser());
+        dispatch(removeGptSearchMovieResult());
         navigate("/");
       }
     });

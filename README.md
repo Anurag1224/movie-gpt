@@ -57,6 +57,16 @@
     - build languageConstant to configure multiple language 
     - build configSlice to manage the state of the language 
     - created language supported in the constant.js in which each language has identifier and name
-    - Created multi-language feature in our GPT Search for now
+    - Created multi-language feature in our GPT Search
+    - Get OpenAi Api Key
+    - Gpt Search API Call
+    - fetched gptMoviesSuggestions from TMDB
+    - created gptSlice and stored the recommended movie name from gpt openai to our store
+    - also stored all the data fetched from TMDB which is recommended by gpt openai 
+    - Resused MovieList component to make movie suggestion container
+    - Memoization to prevent unnecessary api calls
+    - Added .env file to keep our secrets key there
+    - Adding .env file to gitignore
+    
     
     
