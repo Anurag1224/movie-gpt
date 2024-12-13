@@ -6,9 +6,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
-import { LOGO_URL, SUPPORTED_LANGUAGES } from "../utils/constants";
+import { SUPPORTED_LANGUAGES } from "../utils/constants";
 import { removeGptSearchMovieResult, toggleGptSearchView } from "../utils/gptSlice";
 import { changeLanguage } from "../utils/configSlice";
+import IMAGES from "../utils/constants";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -57,7 +58,7 @@ const Header = () => {
 
   return (
     <div className="absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between">
-      <img className="w-48 " alt="Logo" src={LOGO_URL} />
+      <img className="w-56 h-20" alt="Logo" src={IMAGES.LOGO_URL} />
       {user && (
         <div className="flex items-center">
           {showGptSearch && (

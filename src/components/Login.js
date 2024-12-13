@@ -181,7 +181,7 @@ const Login = () => {
           </h1>
         )}
         <h1 className="ml-12 text-sm mt-4 flex items-center">
-          {isSignInForm ? "New to NetflixGPT?" : "Already Registered ?"}
+          {isSignInForm ? "New to movieGPT?" : "Already Registered ?"}
 
           <span
             className="ml-1 font-semibold hover:underline hover:cursor-pointer"

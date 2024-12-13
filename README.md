@@ -14,7 +14,7 @@
             - Search Bar
             - Movie Suggestions
 
-# Netflix GPT (Whatever done in the project)
+# Movie GPT (Whatever done in the project)
     - Created React App using create-react-app
     - Configured TailwindCSS
     - Header
