@@ -1,9 +1,4 @@
 
-const IMAGES = {
-  LOGO_URL: require("D:/Namaste Dev/netflix-gpt/src/utils/images/logo_2.png"),
-  FAVICON: require("D:/Namaste Dev/netflix-gpt/src/utils/images/favicon.png")
-}
-
 export const USER_AVATAR =
   "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg";
 
@@ -28,4 +23,3 @@ export const SUPPORTED_LANGUAGES = [
 
 export const OPENAI_API_KEY1 = process.env.REACT_APP_OPENAI_API_KEY;
 
-export default IMAGES;
